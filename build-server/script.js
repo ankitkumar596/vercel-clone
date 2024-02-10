@@ -3,12 +3,12 @@ const { log } = require('console')
 const path = require('path')
 const fs = require('fs')
 const {s3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
-
+const mime = mime = require('mime-types')
 const s3Client = new s3Client({
-    region: '',
+    region: 'us-east-1',
     credentials: {
-        access_key: '',
-        secret_key: ''
+        access_key: 'AKIAYNNV67FSM6IOEQJ4',
+        secret_key: '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'
     } 
 })
 
@@ -37,12 +37,21 @@ async function init() {
         for(const filePath of distFolderContents) {
             if (fs.lstatSync(filePath).isDirectory()) continue;
 
+            console.log('Uploading file', filePath);
+
             const command = new PutObjectCommand({
-                Bucket: '',
+                Bucket: 'versel-bucket-vers',
                 kye: `__output/${PROJECT_ID/$filePath}`,
                 Body: fs.createReadStream(filePath),
-                ContentType:  
+                ContentType:  mime.lookup(filePath)
             })
+            
+            await s3Client.send(command)
+            console.log('Uploaded file', filePath);
         }
+        console.log('Done.....');
     })
 }
+
+init()
+
