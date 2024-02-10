@@ -2,7 +2,17 @@ const {exec} = require('child_process')
 const { log } = require('console')
 const path = require('path')
 const fs = require('fs')
+const {s3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
 
+const s3Client = new s3Client({
+    region: '',
+    credentials: {
+        access_key: '',
+        secret_key: ''
+    } 
+})
+
+const PROJECT_ID = process.env.PROJECT_ID
 
 async function init() {
     console.log("Executing script.js")
@@ -26,6 +36,13 @@ async function init() {
 
         for(const filePath of distFolderContents) {
             if (fs.lstatSync(filePath).isDirectory()) continue;
+
+            const command = new PutObjectCommand({
+                Bucket: '',
+                kye: `__output/${PROJECT_ID/$filePath}`,
+                Body: fs.createReadStream(filePath),
+                ContentType:  
+            })
         }
     })
 }
